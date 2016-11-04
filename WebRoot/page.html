@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Testing websockets</title>
+</head>
+<body>
+	<div>
+		<input type="submit" value="Start" onclick="start()" />
+	</div>
+	<div id="messages"></div>
+	<script type="text/javascript">
+	
+		function getPath() {
+			var curPath = window.document.location.href;  
+			var pathName = window.document.location.pathname;  
+			var pos = curPath.indexOf(pathName);   
+			var localhostPath = curPath.substring(0, pos);
+			var projectName = pathName.substring(0, pathName.substr(1).indexOf('/') + 1);  
+			var baseUrl = localhostPath + projectName;
+			baseUrl = baseUrl.substring(baseUrl.indexOf('//') + 2);
+			return baseUrl;
+		}
+
+		
+		var url = 'ws://' + getPath() + "/websocket";
+		
+		var webSocket = new WebSocket(url);
+
+		webSocket.onerror = function(event) {
+			onError(event)
+		};
+
+		webSocket.onopen = function(event) {
+			onOpen(event)
+		};
+
+		webSocket.onmessage = function(event) {
+			onMessage(event)
+		};
+
+		function onMessage(event) {
+			document.getElementById('messages').innerHTML 
+				+= '<br />' + event.data;
+		}
+
+		function onOpen(event) {
+			document.getElementById('messages').innerHTML 
+				= 'Connection established';
+		}
+
+		function onError(event) {
+			alert(event.data);
+		}
+
+		function start() {
+			webSocket.send('hello');
+			return false;
+		}
+	</script>
+</body>
+</html>
